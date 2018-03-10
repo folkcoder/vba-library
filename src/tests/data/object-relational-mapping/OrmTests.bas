@@ -11,7 +11,7 @@ Private Fakes As Object
 
 Private mobjOrm As IMapper
 Private mobjTestClass As IMappable
-
+Private mstrTableName As String
 
 ' =============================================================================
 ' INITIALIZE / CLEANUP
@@ -21,8 +21,12 @@ Private mobjTestClass As IMappable
 Public Sub ModuleInitialize()
     Set Assert = CreateObject("Rubberduck.AssertClass")
     Set Fakes = CreateObject("Rubberduck.FakesProvider")
-    Set mobjOrm = New OrmAdodb
-    Set mobjTestClass = New IMappableMock
+    Set mobjOrm = New OrmDao
+    
+    Set mobjTestClass = New MockMappable
+    mstrTableName = "MockMappable"
+    'mstrTableName = "MockMappableWithAutonumber"
+    
     mobjOrm.DeleteAll mobjTestClass
 End Sub
 
@@ -106,7 +110,7 @@ Public Sub DeleteSingle_Test()
 On Error GoTo TestFail
 
     'Arrange
-    Dim obj As IMappableMock
+    Dim obj As MockMappable
     Set obj = InsertTestRecord("DeleteSingle_Test")
 
     'Act:
@@ -169,7 +173,7 @@ On Error GoTo TestFail
         
     
     'Act:
-    strQuery = "SELECT * FROM TestClass WHERE TestName = 'Find_GetMultiple_Test'"
+    strQuery = "SELECT * FROM " & mstrTableName & " WHERE [Name] = 'Find_GetMultiple_Test'"
     Set col = mobjOrm.GetMultiple(mobjTestClass, strQuery)
 
     'Assert:
@@ -199,7 +203,7 @@ On Error GoTo TestFail
         
     
     'Act:
-    strFilter = "TestName = 'Find_GetMultipleByFilter_Test'"
+    strFilter = "[Name] = 'Find_GetMultipleByFilter_Test'"
     Set col = mobjOrm.GetMultipleByFilter(mobjTestClass, strFilter)
 
     'Assert:
@@ -220,15 +224,15 @@ Public Sub GetSingleByPrimaryKey_Test()
 On Error GoTo TestFail
    
     'Arrange:
-    Dim objInsert As IMappableMock
-    Dim objRetrieve As IMappableMock
+    Dim objInsert As MockMappable
+    Dim objRetrieve As MockMappable
     Dim lngPrimaryKey As Long
     
     Set objInsert = InsertTestRecord("GetSingleByPrimaryKey_Test")
-    lngPrimaryKey = objInsert.TestingID
+    lngPrimaryKey = objInsert.PersonId
     
     'Act:
-    Set objRetrieve = New IMappableMock
+    Set objRetrieve = New MockMappable
     
     'Assert:
     Assert.IsTrue mobjOrm.GetSingle(objRetrieve, lngPrimaryKey)
@@ -250,7 +254,7 @@ On Error GoTo TestFail
     'Arrange:
     Dim col As Collection
     Dim colTestResults As Collection
-    Dim objTestResult As IMappableMock
+    Dim objTestResult As MockMappable
     
     Set col = New Collection
     col.Add CreateTestRecord("InsertMultiple_Test")
@@ -263,11 +267,11 @@ On Error GoTo TestFail
     mobjOrm.InsertMultiple col
 
     'Assert:
-    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "TestName = 'InsertMultiple_Test'")
+    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "[Name] = 'InsertMultiple_Test'")
     Assert.IsTrue colTestResults.Count = col.Count
     
     Set objTestResult = colTestResults.Item(1)
-    Assert.IsTrue objTestResult.TestingID <> 0
+    Assert.IsTrue objTestResult.PersonId <> 0
 
 TestExit:
     Exit Sub
@@ -284,16 +288,16 @@ Public Sub InsertSingle_Test()
 On Error GoTo TestFail
     
     'Arrange:
-    Dim obj As IMappableMock
+    Dim obj As MockMappable
     Dim colTestResults As Collection
 
     'Act:
     Set obj = InsertTestRecord("InsertSingle_Test")
 
     'Assert:
-    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "TestName = 'InsertSingle_Test'")
+    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "[Name] = 'InsertSingle_Test'")
     Assert.IsTrue colTestResults.Count = 1
-    Assert.IsTrue obj.TestingID <> 0
+    Assert.IsTrue obj.PersonId <> 0
 
 TestExit:
     Exit Sub
@@ -310,22 +314,23 @@ Public Sub UpdateMultiple_Test()
 On Error GoTo TestFail
     
     'Arrange:
-    Dim objUpdate1 As IMappableMock
-    Dim objUpdate2 As IMappableMock
-    Dim objUpdate3 As IMappableMock
+    Dim objUpdate1 As MockMappable
+    Dim objUpdate2 As MockMappable
+    Dim objUpdate3 As MockMappable
     
     Dim colObjsToUpdate As Collection
     Dim colUpdatedItems As Collection
     
-    Dim objUpdatedItem As IMappableMock
+    Dim objUpdatedItem As MockMappable
     
     Set objUpdate1 = InsertTestRecord("UpdateMultiple_Test")
     Set objUpdate2 = InsertTestRecord("UpdateMultiple_Test")
     Set objUpdate3 = InsertTestRecord("UpdateMultiple_Test")
     
-    objUpdate1.TestColor = "Salmon"
-    objUpdate2.TestColor = "Puce"
-    objUpdate3.TestColor = "Mauve"
+    objUpdate1.FavoriteColor = "Salmon"
+    objUpdate2.FavoriteColor = "Puce"
+    objUpdate3.FavoriteColor = "Mauve"
+    
     
     Set colObjsToUpdate = New Collection
     colObjsToUpdate.Add objUpdate1
@@ -335,17 +340,17 @@ On Error GoTo TestFail
     'Act:
     mobjOrm.UpdateMultiple colObjsToUpdate
     
-    Set colUpdatedItems = mobjOrm.GetMultipleByFilter(mobjTestClass, "TestName = 'UpdateMultiple_Test'")
+    Set colUpdatedItems = mobjOrm.GetMultipleByFilter(mobjTestClass, "[Name] = 'UpdateMultiple_Test'")
 
     'Assert:
     Set objUpdatedItem = colUpdatedItems.Item(1)
-    Assert.IsTrue objUpdatedItem.TestColor = "Salmon"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Salmon"
     
     Set objUpdatedItem = colUpdatedItems.Item(2)
-    Assert.IsTrue objUpdatedItem.TestColor = "Puce"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Puce"
     
     Set objUpdatedItem = colUpdatedItems.Item(3)
-    Assert.IsTrue objUpdatedItem.TestColor = "Mauve"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Mauve"
 
 TestExit:
     Exit Sub
@@ -362,20 +367,20 @@ Public Sub UpdateSingle_Test()
 On Error GoTo TestFail
     
     'Arrange:
-    Dim obj As IMappableMock
-    Dim objTestUpdate As IMappableMock
+    Dim obj As MockMappable
+    Dim objTestUpdate As MockMappable
         
     Set obj = InsertTestRecord("UpdateSingle_Test")
     
     'Act:
-    obj.TestColor = "Maroon"
+    obj.FavoriteColor = "Maroon"
     mobjOrm.UpdateSingle obj
     
-    Set objTestUpdate = New IMappableMock
-    mobjOrm.GetSingle objTestUpdate, obj.TestingID
+    Set objTestUpdate = New MockMappable
+    mobjOrm.GetSingle objTestUpdate, obj.PersonId
 
     'Assert:
-    Assert.IsTrue objTestUpdate.TestColor = "Maroon"
+    Assert.IsTrue objTestUpdate.FavoriteColor = "Maroon"
 
 TestExit:
     Exit Sub
@@ -392,22 +397,22 @@ Public Sub UpsertMultipleAsUpdate_Test()
 On Error GoTo TestFail
 
     'Arrange:
-    Dim objUpdate1 As IMappableMock
-    Dim objUpdate2 As IMappableMock
-    Dim objUpdate3 As IMappableMock
+    Dim objUpdate1 As MockMappable
+    Dim objUpdate2 As MockMappable
+    Dim objUpdate3 As MockMappable
     
     Dim colObjsToUpdate As Collection
     Dim colUpdatedItems As Collection
     
-    Dim objUpdatedItem As IMappableMock
+    Dim objUpdatedItem As MockMappable
     
     Set objUpdate1 = InsertTestRecord("UpsertMultipleAsUpdate_Test")
     Set objUpdate2 = InsertTestRecord("UpsertMultipleAsUpdate_Test")
     Set objUpdate3 = InsertTestRecord("UpsertMultipleAsUpdate_Test")
     
-    objUpdate1.TestColor = "Salmon"
-    objUpdate2.TestColor = "Puce"
-    objUpdate3.TestColor = "Mauve"
+    objUpdate1.FavoriteColor = "Salmon"
+    objUpdate2.FavoriteColor = "Puce"
+    objUpdate3.FavoriteColor = "Mauve"
     
     Set colObjsToUpdate = New Collection
     colObjsToUpdate.Add objUpdate1
@@ -417,17 +422,17 @@ On Error GoTo TestFail
     'Act:
     mobjOrm.UpsertMultiple colObjsToUpdate
     
-    Set colUpdatedItems = mobjOrm.GetMultipleByFilter(mobjTestClass, "TestName = 'UpsertMultipleAsUpdate_Test'")
+    Set colUpdatedItems = mobjOrm.GetMultipleByFilter(mobjTestClass, "[Name] = 'UpsertMultipleAsUpdate_Test'")
 
     'Assert:
     Set objUpdatedItem = colUpdatedItems.Item(1)
-    Assert.IsTrue objUpdatedItem.TestColor = "Salmon"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Salmon"
     
     Set objUpdatedItem = colUpdatedItems.Item(2)
-    Assert.IsTrue objUpdatedItem.TestColor = "Puce"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Puce"
     
     Set objUpdatedItem = colUpdatedItems.Item(3)
-    Assert.IsTrue objUpdatedItem.TestColor = "Mauve"
+    Assert.IsTrue objUpdatedItem.FavoriteColor = "Mauve"
 
 TestExit:
     Exit Sub
@@ -444,7 +449,7 @@ Public Sub UpsertSingleAsInsert_Test()
 On Error GoTo TestFail
     
     'Arrange:
-    Dim obj As IMappableMock
+    Dim obj As MockMappable
     Dim colTestResults As Collection
 
     'Act:
@@ -452,9 +457,9 @@ On Error GoTo TestFail
     mobjOrm.UpsertSingle obj
 
     'Assert:
-    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "TestName = 'UpsertSingleAsInsert_Test'")
+    Set colTestResults = mobjOrm.GetMultipleByFilter(mobjTestClass, "[Name] = 'UpsertSingleAsInsert_Test'")
     Assert.IsTrue colTestResults.Count = 1
-    Assert.IsTrue obj.TestingID <> 0
+    Assert.IsTrue obj.PersonId <> 0
 
 TestExit:
     Exit Sub
@@ -470,20 +475,20 @@ End Sub
 Public Sub UpsertSingleAsUpdate_Test()
 
     'Arrange:
-    Dim obj As IMappableMock
-    Dim objTestUpdate As IMappableMock
+    Dim obj As MockMappable
+    Dim objTestUpdate As MockMappable
     
     Set obj = InsertTestRecord("UpdateSingle_Test")
     
     'Act:
-    obj.TestColor = "Maroon"
+    obj.FavoriteColor = "Maroon"
     mobjOrm.UpsertSingle obj
     
-    Set objTestUpdate = New IMappableMock
-    mobjOrm.GetSingle objTestUpdate, obj.TestingID
+    Set objTestUpdate = New MockMappable
+    mobjOrm.GetSingle objTestUpdate, obj.PersonId
 
     'Assert:
-    Assert.IsTrue objTestUpdate.TestColor = "Maroon"
+    Assert.IsTrue objTestUpdate.FavoriteColor = "Maroon"
 
 TestExit:
     Exit Sub
@@ -498,15 +503,16 @@ End Sub
 ' HELPER METHODS
 ' =============================================================================
 
-Private Function CreateTestRecord(ByVal strTestName As String) As IMappableMock
+Private Function CreateTestRecord(ByVal strPersonName As String) As MockMappable
 
-Dim obj As IMappableMock
+Dim obj As MockMappable
 
-    Set obj = New IMappableMock
+    Set obj = New MockMappable
     With obj
-        .TestColor = "Chartreuse"
-        .TestName = strTestName
-        .TestNumber = 12345
+        .FavoriteColor = "Chartreuse"
+        .PersonId = GeneratePseudoRandomLong
+        .PersonName = strPersonName
+        .PersonBirthdate = #1/1/1990#
     End With
     Set CreateTestRecord = obj
 
@@ -514,17 +520,27 @@ End Function
 
 ' =============================================================================
 
-Private Function InsertTestRecord(ByVal strTestName As String) As IMappableMock
+Private Function GeneratePseudoRandomLong() As Long
+    Randomize
+    GeneratePseudoRandomLong = Int((2147483648# - -2147483648# + 1) * Rnd + -2147483648#)
+End Function
 
-Dim obj As IMappableMock
+' =============================================================================
 
-    Set obj = New IMappableMock
+Private Function InsertTestRecord(ByVal strPersonName As String) As MockMappable
+
+Dim obj As MockMappable
+
+    Set obj = New MockMappable
     With obj
-        .TestColor = "Chartreuse"
-        .TestName = strTestName
-        .TestNumber = 12345
+        .FavoriteColor = "Chartreuse"
+        .PersonId = GeneratePseudoRandomLong
+        .PersonName = strPersonName
+        .PersonBirthdate = #1/1/1990#
     End With
     mobjOrm.InsertSingle obj
     Set InsertTestRecord = obj
 
 End Function
+
+' =============================================================================

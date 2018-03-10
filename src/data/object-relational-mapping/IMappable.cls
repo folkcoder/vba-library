@@ -14,6 +14,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Property Get MappedProperties() As dictionary
+Public Property Get MappedProperties() As Dictionary
 End Property
 
 Public Property Get TableName() As String

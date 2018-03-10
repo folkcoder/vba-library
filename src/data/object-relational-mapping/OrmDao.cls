@@ -168,7 +168,7 @@ Dim fld As DAO.Field
     Set rec = dbCurrent.OpenRecordset(strTableName, RecordsetOptionEnum.dbReadOnly)
     Set fld = rec.Fields(strFieldName)
     
-    FieldAutoIncrements = fld.Attributes & dbAutoIncrField
+    FieldAutoIncrements = (fld.Attributes And FieldAttributeEnum.dbAutoIncrField) = FieldAttributeEnum.dbAutoIncrField
 
 End Function
 
@@ -228,9 +228,6 @@ Dim vntProperty As Variant
 Dim strClassProperty As String
 Dim strTableProperty As String
 
-    strPrimaryKeyFieldName = GetPrimaryKeyFieldName(obj.TableName)
-    blnPrimaryKeyAutoIncrements = FieldAutoIncrements(obj.TableName, strPrimaryKeyFieldName)
-
     If intWriteOption = WriteOption.Insert Then
         rec.AddNew
     ElseIf intWriteOption = WriteOption.Update Then
@@ -242,11 +239,11 @@ Dim strTableProperty As String
         strClassProperty = CStr(vntProperty)
         strTableProperty = obj.MappedProperties.Item(vntProperty)
         
-        If blnPrimaryKeyAutoIncrements Then
-            If Not strTableProperty = strPrimaryKeyFieldName Then
+        If strTableProperty = strPrimaryKeyFieldName Then
+            strPrimaryKeyClassProperty = strClassProperty
+            
+            If Not blnPrimaryKeyAutoIncrements Then
                 rec.Fields(strTableProperty).Value = obj.GetPropertyValue(strClassProperty)
-            Else
-                strPrimaryKeyClassProperty = strClassProperty
             End If
         Else
             rec.Fields(strTableProperty).Value = obj.GetPropertyValue(strClassProperty)

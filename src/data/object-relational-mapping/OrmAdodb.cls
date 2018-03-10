@@ -223,9 +223,6 @@ Dim vntProperty As Variant
 Dim strClassProperty As String
 Dim strTableProperty As String
 
-    strPrimaryKeyFieldName = GetPrimaryKeyFieldName(obj.TableName)
-    blnPrimaryKeyAutoIncrements = FieldAutoIncrements(obj.TableName, strPrimaryKeyFieldName)
-
     If intWriteOption = WriteOption.Insert Then
         rec.AddNew
     ElseIf intWriteOption = WriteOption.Update Then
@@ -237,18 +234,19 @@ Dim strTableProperty As String
         strClassProperty = CStr(vntProperty)
         strTableProperty = obj.MappedProperties.Item(vntProperty)
         
-        If blnPrimaryKeyAutoIncrements Then
-            If Not strTableProperty = strPrimaryKeyFieldName Then
+        If strTableProperty = strPrimaryKeyFieldName Then
+            strPrimaryKeyClassProperty = strClassProperty
+            
+            If Not blnPrimaryKeyAutoIncrements Then
                 rec.Fields(strTableProperty).Value = obj.GetPropertyValue(strClassProperty)
-            Else
-                strPrimaryKeyClassProperty = strClassProperty
             End If
         Else
             rec.Fields(strTableProperty).Value = obj.GetPropertyValue(strClassProperty)
         End If
         
     Next vntProperty
-    obj.LetPropertyValue strPrimaryKeyClassProperty, rec.Fields(strPrimaryKeyFieldName)
+    
+    obj.LetPropertyValue strPrimaryKeyClassProperty, rec.Fields(strPrimaryKeyFieldName).Value
     rec.Update
     
 End Sub
@@ -511,13 +509,12 @@ Private Sub IMapper_InsertSingle(ByRef obj As IMappable)
 
 Dim strPrimaryKeyFieldName As String
 Dim blnPrimaryKeyAutoIncrements As Boolean
-
 Dim conn As ADODB.Connection
 Dim rec As ADODB.Recordset
 
     strPrimaryKeyFieldName = GetPrimaryKeyFieldName(obj.TableName)
     blnPrimaryKeyAutoIncrements = FieldAutoIncrements(obj.TableName, strPrimaryKeyFieldName)
-    
+   
     Set conn = CurrentProject.Connection
     Set rec = New ADODB.Recordset
     rec.Open obj.TableName, conn, adOpenDynamic, adLockOptimistic
