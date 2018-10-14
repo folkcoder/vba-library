@@ -1,0 +1,120 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "SettingsManager"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'@Description("Provides a wrapper to read and write data to an INI file.")
+'@Folder("VBALibrary.Configuration")
+
+Option Explicit
+
+
+' =============================================================================
+' API DECLARATIONS
+' =============================================================================
+
+Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" ( _
+    ByVal lpApplicationName As String, _
+    ByVal lpKeyName As Any, _
+    ByVal lpDefault As String, _
+    ByVal lpReturnedString As String, _
+    ByVal nSize As Long, _
+    ByVal lpFileName As String _
+    ) As Long
+                 
+Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" ( _
+    ByVal lpApplicationName As String, _
+    ByVal lpKeyName As Any, _
+    ByVal lpString As Any, _
+    ByVal lpFileName As String _
+    ) As Long
+    
+Private Enum iniAction
+    iniRead = 1
+    iniWrite = 2
+End Enum
+
+Private mstrConfigFilePath As String
+
+
+' =============================================================================
+' INITIALIZE / CLEANUP
+' =============================================================================
+
+'@Description("Initializes the settings manager instance.")
+'@Param("strConfigFilePath: The path of the settings file associated with the instance.")
+Public Sub Initialize(ByVal strConfigFilePath As String)
+    mstrConfigFilePath = strConfigFilePath
+End Sub
+
+
+' =============================================================================
+' PUBLIC METHODS
+' =============================================================================
+
+'@Description("Reads a configuration file key.)
+'@Param("strSection: The configuration file section to read.")
+'@Param("strKey: The key associated with the requested data.")
+'@Param("strDefaultValue: A default value to return if the key does not exist.")
+'@Returns("The value of the requested key.")
+Public Function ReadConfig(ByVal strSection As String, ByVal strKey As String, Optional ByVal strDefaultValue As String) As String
+
+Dim strReturnValue As String
+Dim lngReturnBuffer As Long
+
+    Call EnsureConfigFileExists
+    strReturnValue = Space(255)
+    lngReturnBuffer = GetPrivateProfileString(strSection, strKey, strDefaultValue, strReturnValue, 255, mstrConfigFilePath)
+    ReadConfig = Trim$(Left$(strReturnValue, lngReturnBuffer))
+
+End Function
+
+
+'@Description("Writes the provided value to the configuration file under the provided section and key name.")
+'@Param("strSection: The configuration file section where the key is stored.")
+'@Param("strKey: The key to be written.")
+'@Param("strValue: The value to write.")
+'@Returns("A value indicating if the write operation was successful.")
+Public Function WriteConfig(ByVal strSection As String, ByVal strKey As String, ByVal strValue As String) As Boolean
+
+Dim lngReturnValue As Long
+    
+    Call EnsureConfigFileExists
+    lngReturnValue = WritePrivateProfileString(strSection, strKey, strValue, mstrConfigFilePath)
+    
+    If lngReturnValue = 0 Then
+        WriteConfig = False
+    Else
+        WriteConfig = True
+    End If
+    
+End Function
+
+
+' =============================================================================
+' PRIVATE FUNCTIONS
+' =============================================================================
+
+'@Description("Creates a configuration file if it does not exist.")
+Private Sub EnsureConfigFileExists()
+
+Dim objFso As FileSystemObject
+Dim objShell As Object
+Dim strPath As String
+
+    Set objFso = CreateObject("Scripting.FileSystemObject")
+    Set objShell = CreateObject("Wscript.Shell")
+    
+    If Not objFso.FileExists(mstrConfigFilePath) Then
+        strPath = objFso.GetParentFolderName(mstrConfigFilePath)
+        If Not objFso.FolderExists(strPath) Then
+            objShell.Run "cmd /c mkdir """ & strPath & """", 0, True
+        End If
+        objFso.CreateTextFile mstrConfigFilePath
+    End If
+
+End Sub
