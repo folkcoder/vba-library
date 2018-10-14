@@ -70,7 +70,6 @@ Dim lngNewStringLength As Long
     
 End Sub
 
-' =============================================================================
 
 '@Description("Appends the supplied string and a Carriage-Return/Linefeed to the end of the StringBuilder.")
 '@Param("strTextToAppend: The string to be appended to the current StringBuilder instance.")
@@ -84,7 +83,6 @@ Public Sub AppendLine(Optional ByVal strTextToAppend As String)
     
 End Sub
 
-' =============================================================================
 
 '@Description("Clears the StringBuilder instance.")
 Public Sub Clear()
@@ -119,5 +117,3 @@ Dim lngRequiredCapacity As Long
     
     End If
 End Sub
-
-' =============================================================================
