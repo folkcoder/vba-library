@@ -14,8 +14,6 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-' =============================================================================
-
 '@Description("Determines the nearest date, past or future, matching the provided day of the week.")
 '@Param("intDayOfWeek: The day of the week to find.")
 '@Param("dtmStartDate: The starting date to test.")
@@ -47,7 +45,6 @@ Dim intNextDayDate As Date
 
 End Function
 
-' =================================================================================================
 
 '@Description("Determines the next date matching the provided day of the week.")
 '@Param("intDayOfWeek: The day of the week to find.")
@@ -67,7 +64,6 @@ Dim intWeekdayOfStartDate As Integer
     
 End Function
 
-' =============================================================================
 
 '@Description("Determines the previous date matching the provided day of the week.")
 '@Param("intDayOfWeek: The day of the week to find.")
@@ -86,6 +82,3 @@ Dim intWeekdayOfStartDate As Integer
     End If
     
 End Function
-
-' =============================================================================
-
