@@ -11,9 +11,12 @@ Attribute VB_Exposed = False
 '@Description("Provides methods to extend the string class.")
 '@PredeclaredId(True)
 '@Remarks("This class has its hidden VB_PredeclaredId attribute set to true in order to create a static instance of the class without needing to be instantiated.")
+
 Option Explicit
 
-' =================================================================================================
+Private Declare PtrSafe Function lstrlenW Lib "kernel32" (ByVal lpString As LongPtr) As Long
+Private Declare PtrSafe Function StrTrimW Lib "shlwapi" (ByVal pszSource As LongPtr, ByVal pszTrimChars As LongPtr) As Long
+
 
 '@Description("Calculates the number of bytes in the provided string.")
 '@Param("strStringToCalculate: The string to be calculated.")
@@ -22,77 +25,104 @@ Public Function CalculateBytes(ByVal strStringToCalculate As String) As Long
     CalculateBytes = LenB(strStringToCalculate) / 2
 End Function
 
-' =================================================================================================
 
 '@Description("Counts the number of times the provided text is found in the pro")
 '@Param("strTextToBeSearched: The text to be searched.")
 '@Param("strSearchTerm: The text for which to search.")
-'@Returns("An integer representing the number of times a specified string occurrences in the provided search string.")
+'@Returns("An lngeger representing the number of times a specified string occurrences in the provided search string.")
 Public Function CountMatches(ByVal strTextToBeSearched As String, ByVal strSearchTerm As String) As Long
     CountMatches = Len(strTextToBeSearched) - Len(Replace(strTextToBeSearched, strSearchTerm, vbNullString))
 End Function
 
-' =================================================================================================
 
 '@Description("Generates a pseudo-random string.")
 '@Param("intLength: The lenght of the string to be generated.")
 '@Returns("A pseudo-random string.")
-Public Function GenerateRandom(ByVal intLength As Integer) As String
+Public Function GenerateRandom(ByVal lngLength As Long) As String
 
-Dim CharacterCount As Integer
-Dim RandomNumber As Integer
-Dim Result As String
+Dim lngCharacterCount As Long
+Dim lngRandomNumber As Long
+Dim strResult As String
 
         Randomize
 
-        For CharacterCount = 1 To intLength
-            RandomNumber = Int((126 - 33 + 1) * rnd + 33)
-            Select Case RandomNumber
+        For lngCharacterCount = 1 To lngLength
+            lngRandomNumber = Int((126 - 33 + 1) * rnd + 33)
+            Select Case lngRandomNumber
                 Case 33, 35 To 38, 42, 48 To 57, 63 To 90, 97 To 122 ' !#$%^&* 0-9 ?@ A-Z a-z
-                    Result = Result & Chr$(RandomNumber)
+                    strResult = strResult & Chr$(lngRandomNumber)
                 Case Else
-                    CharacterCount = CharacterCount - 1
+                    lngCharacterCount = lngCharacterCount - 1
             End Select
-        Next CharacterCount
+        Next lngCharacterCount
         
-        GenerateRandom = Result
+        GenerateRandom = strResult
 
 End Function
 
-' =================================================================================================
+
+'@Description("Determines whether the provided string matches a value in the provided delimited list.")
+'@Param("strToEvaluate: The string to test.")
+'@Param("strDelimitedList: A delimited list containing the strings to test against.")
+'@Param("blnCaseSensitive: A value indicating whether the search should be case sensitive. Default is false.")
+'@Param("strDelimiter: A value indicating the delimiter used in the delimited list. Default is the pipe character |.")
+'@Returns("A value indicating whether the provided string is contained in the provided delimited list.")
+Public Function InList(ByVal strToEvaluate As String, ByVal strDelimitedList As String, Optional ByVal blnCaseSensitive As Boolean = False, Optional ByVal strDelimiter As String = "|") As Boolean
+
+Dim lngComparisonType As VbCompareMethod
+Dim strValues() As String
+Dim lngIndex As Long
+
+    If blnCaseSensitive Then
+        lngComparisonType = vbBinaryCompare
+    Else
+        lngComparisonType = vbTextCompare
+    End If
+
+    strValues = Split(strDelimitedList, strDelimiter, -1, lngComparisonType)
+    For lngIndex = LBound(strValues) To UBound(strValues)
+        If StrComp(strToEvaluate, strValues(lngIndex), lngComparisonType) = 0 Then
+            InList = True
+            Exit Function
+        End If
+    Next lngIndex
+      
+    InList = False
+
+End Function
+
 
 '@Description("Pads the provided string on the left side with the filler characters until the string's length matches the desired length.")
 '@Param("strSource: The string to be padded.")
 '@Param("intLength: The final length of the padded string.")
 '@Param("strFillerCharacter: The character to be used to pad the string. Default is an empty space. Only single characters are permitted; additional characters will be ignored.")
 '@Returns("A new string padded on the left with filler characters.")
-Public Function PadLeft(ByVal strSource As String, ByVal intLength As Integer, Optional ByVal strFillerCharacter As String = " ") As String
+Public Function PadLeft(ByVal strSource As String, ByVal lngLength As Long, Optional ByVal strFillerCharacter As String = " ") As String
 
-    If Len(strSource) >= intLength Then
+    If Len(strSource) >= lngLength Then
         PadLeft = strSource
     Else
-        PadLeft = Right$(String(intLength, strFillerCharacter) & strSource, intLength)
+        PadLeft = Right$(String(lngLength, strFillerCharacter) & strSource, lngLength)
     End If
 
 End Function
-' =================================================================================================
+
 
 '@Description("Pads the provided string on the right side with the filler characters until the string's length matches the desired length.")
 '@Param("strSource: The string to be padded.")
 '@Param("intLength: The final length of the padded string.")
 '@Param("strFillerCharacter: The character to be used to pad the string. Default is an empty space. Only single characters are permitted; additional characters will be ignored.")
 '@Returns("A new string padded on the right with filler characters.")
-Public Function PadRight(ByVal strSource As String, ByVal intLength As Integer, Optional ByVal strFillerCharacter As String = " ") As String
+Public Function PadRight(ByVal strSource As String, ByVal lngLength As Long, Optional ByVal strFillerCharacter As String = " ") As String
 
-    If Len(strSource) >= intLength Then
+    If Len(strSource) >= lngLength Then
         PadRight = strSource
     Else
-        PadRight = Left$(strSource & String(intLength, strFillerCharacter), intLength)
+        PadRight = Left$(strSource & String(lngLength, strFillerCharacter), lngLength)
     End If
 
 End Function
 
-' =================================================================================================
 
 '@Description("Finds and replaces all instances of the provided search text except the first.")
 '@Param("strSource: The string to be searched.")
@@ -103,7 +133,6 @@ Public Function ReplaceExceptFirst(ByVal strSource As String, ByVal strTextToRep
     ReplaceExceptFirst = Replace(strSource, strTextToReplace, strReplacementText, 1, -1, vbTextCompare)
 End Function
 
-' =================================================================================================
 
 '@Description("Finds and replaces all instances of the provided search text except the last.")
 '@Param("strSource: The string to be searched.")
@@ -112,14 +141,13 @@ End Function
 '@Returns("A string with all occurrences of the specified text replaced except the last.")
 Public Function ReplaceExceptLast(ByVal strSource As String, ByVal strTextToReplace As String, ByVal strReplacementText As String) As String
 
-Dim intMatchesCount As Integer
+Dim lngMatchesCount As Long
 
-    intMatchesCount = CountMatches(strSource, strTextToReplace)
-    ReplaceExceptLast = Replace(strSource, strTextToReplace, strReplacementText, 1, intMatchesCount - 1, vbTextCompare)
+    lngMatchesCount = CountMatches(strSource, strTextToReplace)
+    ReplaceExceptLast = Replace(strSource, strTextToReplace, strReplacementText, 1, lngMatchesCount - 1, vbTextCompare)
 
 End Function
 
-' =================================================================================================
 
 '@Description("Finds and replaces the last character of a string.")
 '@Param("strSource: The source string.")
@@ -129,7 +157,6 @@ Public Function ReplaceLastCharacter(ByVal strSource As String, ByVal strReplace
     ReplaceLastCharacter = Left$(strSource, Len(strSource) - 1) & strReplacementCharacter
 End Function
 
-' =================================================================================================
 
 '@Description("Removes nonalphanumeric characters from a string.")
 '@Param("strSource: The string to be transformed.")
@@ -164,4 +191,18 @@ Dim lngCharacterCount As Long
     
 End Function
 
-' =================================================================================================
+
+'@Description("Trims all whitespace characters from a string rather than just spaces.")
+'@Param("str: The string to be trimmed.")
+'@Returns("A string trimmed of whitespace characters.")
+Public Function TrimEx(ByVal str As String) As String
+
+Const WHITE_SPACE As String = " " & vbTab & vbCr & vbLf
+
+    If StrTrimW(StrPtr(str), StrPtr(WHITE_SPACE)) Then
+        TrimEx = Left$(str, lstrlenW(StrPtr(str)))
+    Else
+        TrimEx = str
+    End If
+
+End Function
