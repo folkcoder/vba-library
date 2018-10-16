@@ -1,0 +1,33 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "NumericEx"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+'@Folder("VBALibrary.System")
+'@Description("Provides methods to extend number types.")
+'@PredeclaredId(True)
+'@Remarks("This class has its hidden VB_PredeclaredId attribute set to true in order to create a static instance of the class without needing to be instantiated.")
+
+Option Explicit
+
+
+'@Description("Determines whether the provided number is contained in the provided parameter array.")
+'@Param("lngNumberToTest: The number to match." )
+'@Param("vntListOfNumbers: A parameter array of numbers to test against." )
+'@Returns("A value indicating whether the provided number is in the provided list.")
+Public Function InList(ByVal vntNumberToTest As Variant, ParamArray vntListOfNumbers() As Variant) As Boolean
+
+Dim lngIndex As Long
+
+    For lngIndex = 0 To UBound(vntListOfNumbers)
+        If CLng(vntListOfNumbers(lngIndex)) = vntNumberToTest Then
+            NumberInList = True
+            Exit Function
+        End If
+    Next lngIndex
+
+End Function
