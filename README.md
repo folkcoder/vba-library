@@ -1,2 +1,2 @@
-# vba-library
-A library containing classes used to extend Visual Basic for Applications.
+# Visual Basic for Applications Extension Library
+A library used to provide functionality lacking in VBA but common on more modern object-oriented programming languages. Some of the classes extend native VBA types (marked by the 'ex' suffix) and are called as static helper methods by setting the hidden VB_PredeclaredId attribute. Other classes encapsulate common VBA use cases and must be instantiated as new objects.
