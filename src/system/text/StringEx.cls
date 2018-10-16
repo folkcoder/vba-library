@@ -160,31 +160,42 @@ End Function
 
 '@Description("Removes nonalphanumeric characters from a string.")
 '@Param("strSource: The string to be transformed.")
-'@Param("blnStripAsterisks: A value indicating whether asterisks should be removed.")
-'@Param("blnStripHyphens: A value indicating whether hyphens should be removed.")
-'@Param("blnStripPipes: A value indicating whether vertical pipes should be removed.")
-'@Param("blnStripSpaces: A value indicating whether spaces should be removed.")
-'@Param("blnStripUnderscores: A value indicating underscores should be removed.")
+'@Param("blnIgnoreAsterisks: A value indicating whether asterisks should be ignored.")
+'@Param("blnIgnoreHyphens: A value indicating whether hyphens should be ignored.")
+'@Param("blnIgnorePeriods: A value indicating whether periods should be ignored.")
+'@Param("blnIgnorePipes: A value indicating whether vertical pipes should be ignored.")
+'@Param("blnIgnoreSpaces: A value indicating whether spaces should be ignored.")
+'@Param("blnIgnoreUnderscores: A value indicating underscores should be ignored.")
 '@Returns("A string containing the original string stripped of any nonalphanumeric characters.")
-Public Function StripNonalphanumericChars(ByVal strSource As String, Optional ByVal blnStripAsterisks As Boolean = True, Optional ByVal blnStripHyphens As Boolean = False, Optional ByVal blnStripPipes As Boolean = True, Optional ByVal blnStripSpaces As Boolean = False, Optional ByVal blnStripUnderscores As Boolean = True) As String
+Public Function StripNonalphanumericChars( _
+    ByVal strSource As String, _
+    Optional ByVal blnIgnoreAsterisks As Boolean = False, _
+    Optional ByVal blnIgnoreHyphens As Boolean = False, _
+    Optional ByVal blnIgnorePeriods As Boolean = False, _
+    Optional ByVal blnIgnorePipes As Boolean = False, _
+    Optional ByVal blnIgnoreSpaces As Boolean = False, _
+    Optional ByVal blnIgnoreUnderscores As Boolean = False _
+    ) As String
 
 Dim strResult As String
 Dim lngCharacterCount As Long
 
     For lngCharacterCount = 1 To Len(strSource)
         Select Case Asc(Mid$(strSource, lngCharacterCount, 1))
+            Case 46 ' period
+                If blnIgnorePeriods Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
             Case 48 To 57, 65 To 90, 97 To 122 ' 0-9 A-Z a-z
                 strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
             Case 32 ' space
-                If blnStripSpaces = False Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
+                If blnIgnoreSpaces Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
             Case 42 ' *
-                If blnStripAsterisks = False Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
+                If blnIgnoreAsterisks Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
             Case 45 ' -
-                If blnStripHyphens = False Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
-            Case 95
-                If blnStripUnderscores = False Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
-            Case 124
-                If blnStripPipes = False Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
+                If blnIgnoreHyphens Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
+            Case 95 ' _
+                If blnIgnoreUnderscores Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
+            Case 124 ' |
+                If blnIgnorePipes Then strResult = strResult & Mid$(strSource, lngCharacterCount, 1)
         End Select
     Next
     StripNonalphanumericChars = strResult
