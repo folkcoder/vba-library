@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'@Description("Provides a wrapper to read and write data to an INI file.")
+'@Description("Provides a wrapper to read and write data to an INI settings file.")
 '@Folder("VBALibrary.Configuration")
 
 Option Explicit
@@ -102,7 +102,7 @@ End Function
 '@Description("Creates a configuration file if it does not exist.")
 Private Sub EnsureConfigFileExists()
 
-Dim objFso As FileSystemObject
+Dim objFso As Object
 Dim objShell As Object
 Dim strPath As String
 
