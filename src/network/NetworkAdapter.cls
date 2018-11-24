@@ -14,7 +14,6 @@ Attribute VB_Exposed = True
 
 Option Explicit
 
-' =============================================================================
 
 '@Description("Determines whether the calling machine is connection to a network driver with the provided name.")
 '@Param("strNetworkDriverName: The name of the network driver ")
