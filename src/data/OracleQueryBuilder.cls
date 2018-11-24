@@ -83,7 +83,6 @@ Dim param As Object
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a currency parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -101,7 +100,6 @@ Dim param As Object
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a date parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -119,7 +117,6 @@ Dim param As Object
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a long parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -137,7 +134,6 @@ Dim param As Object
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Adds a predicate to the query's WHERE criteria.")
 '@Param("strPredicate: The predicate text to be added.")
@@ -145,7 +141,6 @@ Public Sub AddPredicate(ByVal strPredicate As String)
     mobjPredicates.Add "(" & strPredicate & ")"
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a string parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -164,7 +159,6 @@ Dim param As Object
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Parses the query, its predicates, and any parameter values, and outputs an SQL statement.")
 '@Returns("A string containing the parsed query.")
@@ -219,7 +213,6 @@ Dim lngWordEndPosition As Long
     
 End Sub
 
-' =============================================================================
 
 '@Description("Creates a new collection of ADODB.Parameter objects mapped to parameter placeholders in the query text and the class's parameters collection.")
 '@Returns("A collection of ADODB.Parameter objects.")
@@ -270,7 +263,6 @@ Dim lngCounter As Long
     
 End Function
 
-' =============================================================================
 
 '@Description("Combines each predicate in the predicates collection into a single string statement.")
 '@Returns("A string containing the text of all predicates added to the query builder.")
@@ -290,7 +282,6 @@ Dim vntPredicate As Variant
     
 End Function
 
-' =============================================================================
 
 '@Description("Replaces parameters in the predicates statements with a placeholder (?) for a value to be provided by a parameter object.")
 '@Param("strPredicates: The text of the query's predicates.")
@@ -318,5 +309,3 @@ Const strProcedureName As String = "ReplaceParametersWithValues"
     ReplaceParametersWithValues = strPredicatesWithValues
     
 End Function
-
-' =============================================================================
