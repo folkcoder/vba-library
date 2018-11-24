@@ -72,7 +72,6 @@ Public Sub AddBooleanParameter(ByVal strName As String, ByVal blnValue As Boolea
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a currency parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -85,7 +84,6 @@ Public Sub AddCurrencyParameter(ByVal strName As String, ByVal curValue As Curre
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a date parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -98,7 +96,6 @@ Public Sub AddDateParameter(ByVal strName As String, ByVal dtmValue As Date)
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a long parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -111,7 +108,6 @@ Public Sub AddLongParameter(ByVal strName As String, ByVal lngValue As Long)
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Adds a predicate to the query's WHERE criteria.")
 '@Param("strPredicate: The predicate text to be added.")
@@ -119,7 +115,6 @@ Public Sub AddPredicate(ByVal strPredicate As String)
     mobjPredicates.Add "(" & strPredicate & ")"
 End Sub
 
-' =============================================================================
 
 '@Description("Maps a string parameter and its value to the query builder.")
 '@Param("strName: The parameter's name.")
@@ -132,7 +127,6 @@ Public Sub AddStringParameter(ByVal strName As String, ByVal strValue As String)
     End If
 End Sub
 
-' =============================================================================
 
 '@Description("Parses the query, its predicates, and any parameter values, and outputs an SQL statement.")
 '@Returns("A string containing the parsed query.")
@@ -187,7 +181,6 @@ Dim lngWordEndPosition As Long
     
 End Sub
 
-' =============================================================================
 
 '@Description("Combines each predicate in the predicates collection into a single string statement.")
 '@Returns("A string containing the text of all predicates added to the query builder.")
@@ -207,7 +200,6 @@ Dim vntPredicate As Variant
     
 End Function
 
-' =============================================================================
 
 '@Description("Replaces parameters in the predicates statements with their provided values.")
 '@Param("strPredicates: The text of the query's predicates.")
@@ -236,5 +228,3 @@ Dim strPredicatesWithValues As String
     ReplaceParametersWithValues = strPredicatesWithValues
     
 End Function
-
-' =============================================================================
