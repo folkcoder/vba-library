@@ -123,7 +123,6 @@ Dim objAD As Object
     
 End Function
 
-' =============================================================================
 
 '@Description("Retrieves the distinguished name of the provided SAMAccountName.")
 '@Param("strSamAccountName: The SAMAccountName of the Active Directory object to be queried (defaults to current user).")
@@ -154,7 +153,6 @@ Dim recLDAP As Object
         
 End Function
 
-' =============================================================================
 
 '@Description("Retrieves the value of the selected Active Directory attribute attribute for the provided SAMAccountName.")
 '@Param("ExtendedAttribute: The name of the extended attribute to be retrieved.")
@@ -189,7 +187,6 @@ Dim objAD As Object
        
 End Function
 
-' =============================================================================
 
 '@Description("Retrieves the organizational unit of the provided SAMAccountName.")
 '@Param("strSamAccountName: The SAMAccountName of the Active Directory object to be queried (defaults to current user).")
@@ -207,7 +204,6 @@ Dim intLength As Integer
             
 End Function
 
-' =============================================================================
 
 '@Description("Retrieves the SAMAccountName of the current user.")
 '@Returns("The SAMAccountName of the current user.")
@@ -225,8 +221,6 @@ Dim objUser As Object
 
 End Function
 
-
-' =============================================================================
 
 '@Description("Determines whether the provided SAMAccountName is a member of the provided group.")
 '@Param("strGroupSamAccountName: The SAMAccountName of the group to be queried.")
