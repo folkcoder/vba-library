@@ -33,8 +33,6 @@ Public Function DeleteAll(ByVal obj As IMappable) As Long
     DeleteAll = IMapper_DeleteAll(obj)
 End Function
 
-' =============================================================================
-
 '@Description("Deletes a collection of IMappable objects from the data store.")
 '@Param("col: A collection of IMappable objects to be deleted."
 '@Returns("The number of records deleted.")
@@ -42,7 +40,6 @@ Public Function DeleteMultiple(ByVal col As Collection) As Long
     DeleteMultiple = IMapper_DeleteMultiple(col)
 End Function
 
-' =============================================================================
 
 '@Description("Deletes a single IMappable object from the data store.")
 '@Param("obj: An IMappable object to be deleted.")
@@ -50,7 +47,6 @@ Public Sub DeleteSingle(ByVal obj As IMappable)
     IMapper_DeleteSingle obj
 End Sub
 
-' =============================================================================
 
 '@Description("Maps records from the data store to a collection of IMappable objects.")
 '@Param("obj: A concrete IMappable instance of the type to which the records will be mapped.")
@@ -59,7 +55,6 @@ Public Function GetAll(ByVal obj As IMappable) As Collection
     Set GetAll = IMapper_GetAll(obj)
 End Function
 
-' =============================================================================
 
 '@Description("Maps a recordset retrieved by the provided query to a collection of IMappable objects.")
 '@Param("obj: A concrete IMappable instance of the type to which the records will be mapped.")
@@ -69,7 +64,6 @@ Public Function GetMultiple(ByVal obj As IMappable, ByVal strQuery As String) As
     Set GetMultiple = IMapper_GetMultiple(obj, strQuery)
 End Function
 
-' =============================================================================
 
 '@Description("Maps a recordset retrieved by the provided filter criteria to a collection of IMappable objects.")
 '@Param("obj: A concrete IMappable instance of the type to which the records will be mapped.")
@@ -78,8 +72,7 @@ Public Function GetMultipleByFilter(ByVal obj As IMappable, ByVal strFilterCrite
     Set GetMultipleByFilter = IMapper_GetMultipleByFilter(obj, strFilterCriteria)
 End Function
 
-' =============================================================================
-
+    
 '@Description("Maps the values of a single record to an IMappable object passed by reference.")
 '@Param("obj: A concrete IMappable instance of the type to which the records will be mapped.")
 '@Param("vntPrimaryKey: The record's primary key.")
@@ -89,7 +82,6 @@ Public Function GetSingle(ByRef obj As IMappable, ByVal vntPrimaryKey As Variant
     GetSingle = IMapper_GetSingle(obj, vntPrimaryKey)
 End Function
 
-' =============================================================================
 
 '@Description("Inserts a collection of IMappable objects into the data store.")
 '@Param("col: A collection of IMappable objects to be inserted into the data store.")
@@ -98,7 +90,6 @@ Public Sub InsertMultiple(ByRef col As Collection)
     IMapper_InsertMultiple col
 End Sub
 
-' =============================================================================
 
 '@Description("Inserts an IMappable instance into the data store.")
 '@Param("obj: An IMappable object to be inserted into the data store.")
@@ -107,8 +98,7 @@ Public Sub InsertSingle(ByRef obj As IMappable)
     IMapper_InsertSingle obj
 End Sub
 
-' =============================================================================
-
+    
 '@Description("Determines if the provided item exists in the data store.")
 '@Param("The IMappable object to be tested.")
 '@Returns("A value indicating whether the provided item exists in the data store.")
@@ -116,7 +106,6 @@ Public Function ItemExists(ByVal obj As IMappable) As Boolean
     ItemExists = IMapper_ItemExists(obj)
 End Function
 
-' =============================================================================
 
 '@Description("Updates the data store record associated with each IMappable object in the provided collection.")
 '@Param("col: A collection of IMappable objects to be updated.")
@@ -124,7 +113,6 @@ Public Sub UpdateMultiple(ByVal col As Collection)
     IMapper_UpdateMultiple col
 End Sub
 
-' =============================================================================
 
 '@Description("Updates the data store record associated with the provided IMappable object.")
 '@Param("obj: An IMappable object to be updated.")
@@ -132,7 +120,6 @@ Public Sub UpdateSingle(ByVal obj As IMappable)
     IMapper_UpdateSingle obj
 End Sub
 
-' =============================================================================
 
 '@Description("Upserts a collection of IMappable objects into the data store.")
 '@Param("col: A collection of IMappable objects to be upserted.")
@@ -140,8 +127,7 @@ Public Sub UpsertMultiple(ByVal col As Collection)
     IMapper_UpsertMultiple col
 End Sub
 
-' =============================================================================
-
+    
 '@Description("Upserts an IMappable object into the data store.")
 '@Param("obj: An IMappable object to be upserted.")
 Public Sub UpsertSingle(ByVal obj As IMappable)
@@ -173,7 +159,6 @@ Dim fld As ADODB.Field
 
 End Function
 
-' =============================================================================
 
 '@Description("Retrieves the dictionary key that corresponds to the provided item.")
 '@Param("objDictionary: The dictionary containing the key-value pair.")
@@ -189,7 +174,6 @@ Dim vntKey As Variant
     Next vntKey
 End Function
 
-' =============================================================================
 
 '@Description("Determines the primary key field set on the table.")
 '@Param("strTableName: The name of the table from which to retrieve the primary key field.")
@@ -207,7 +191,6 @@ Dim rec As ADODB.Recordset
 
 End Function
 
-' =============================================================================
 
 '@Description("Maps an IMappable object to a new record in the provided recordset.")
 '@Param("rec: The recordset where the object will be mapped.")
@@ -251,7 +234,6 @@ Dim strTableProperty As String
     
 End Sub
 
-' =============================================================================
 
 '@Description("Maps the current recordset record to an IMappable objects.")
 '@Param("rec: The recordset containing the current record to be mapped.")
@@ -276,7 +258,6 @@ Dim strTableProperty As String
 
 End Sub
 
-' =============================================================================
 
 '@Description("Maps the provided recordset to a collection of IMappable objects.")
 '@Param("rec: The recordset to be mapped.")
@@ -299,7 +280,6 @@ Dim col As Collection
     
 End Function
 
-' =============================================================================
 
 '@Description("Converts a value to an SQL-friendly string.")
 '@Param("The value to be parsed.")
@@ -319,7 +299,6 @@ Private Function ParseSqlCriteria(ByVal vntCriteria As Variant) As String
 
 End Function
 
-' =============================================================================
 
 '@Description("Wraps field and table names containing spaces with brackets.")
 '@Param("The field or table name to wrap.")
@@ -348,7 +327,6 @@ Dim strQuery As String
     
 End Function
 
-' =============================================================================
 
 Private Function IMapper_DeleteMultiple(ByVal col As Collection) As Long
 
@@ -381,7 +359,6 @@ Dim conn As ADODB.Connection
 
 End Function
 
-' =============================================================================
 
 Private Sub IMapper_DeleteSingle(ByVal obj As IMappable)
 
@@ -415,7 +392,6 @@ Const strProcedureName As String = "DeleteSingle"
 
 End Sub
 
-' =============================================================================
 
 Private Function IMapper_GetAll(ByVal obj As IMappable) As Collection
 
@@ -429,7 +405,6 @@ Dim rec As ADODB.Recordset
 
 End Function
 
-' =============================================================================
 
 Private Function IMapper_GetMultiple(ByVal obj As IMappable, ByVal strQuery As String) As Collection
 
@@ -443,7 +418,6 @@ Dim rec As ADODB.Recordset
 
 End Function
 
-' =============================================================================
 
 Public Function IMapper_GetMultipleByFilter(ByVal obj As IMappable, ByVal strFilterCriteria As String) As Collection
 
@@ -458,7 +432,6 @@ Dim rec As ADODB.Recordset
     
 End Function
 
-' =============================================================================
 
 Private Function IMapper_GetSingle(ByRef obj As IMappable, ByVal vntPrimaryKey As Variant) As Boolean
 
@@ -503,7 +476,6 @@ Const strProcedureName As String = "GetSingleByPrimaryKey"
 
 End Function
 
-' =============================================================================
 
 Private Sub IMapper_InsertSingle(ByRef obj As IMappable)
 
@@ -522,7 +494,6 @@ Dim rec As ADODB.Recordset
     
 End Sub
 
-' =============================================================================
 
 Private Sub IMapper_InsertMultiple(ByRef col As Collection)
 
@@ -558,7 +529,6 @@ Dim strTableProperty As String
 
 End Sub
 
-' =============================================================================
 
 Private Function IMapper_ItemExists(ByVal obj As IMappable) As Boolean
 
@@ -583,7 +553,6 @@ Dim rec As ADODB.Recordset
 
 End Function
 
-' =============================================================================
 
 Private Sub IMapper_UpdateMultiple(ByVal col As Collection)
 
@@ -637,7 +606,6 @@ Const strProcedureName As String = "UpdateMultiple"
 
 End Sub
 
-' =============================================================================
 
 Private Sub IMapper_UpdateSingle(ByVal obj As IMappable)
 
@@ -679,7 +647,6 @@ Const strProcedureName As String = "UpdateSingle"
 
 End Sub
 
-' =============================================================================
 
 Public Sub IMapper_UpsertMultiple(ByVal col As Collection)
 
@@ -720,7 +687,6 @@ Dim objItem As IMappable
     
 End Sub
 
-' =============================================================================
 
 Public Sub IMapper_UpsertSingle(ByVal obj As IMappable)
     
@@ -746,6 +712,3 @@ Dim rec As ADODB.Recordset
     End If
     
 End Sub
-
-' =============================================================================
-
